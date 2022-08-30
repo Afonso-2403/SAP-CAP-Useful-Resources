@@ -66,6 +66,7 @@ As an alternative to the built-in method above, this way the application is depl
 * `mbt build` to build the application archive (builds each module in `mta.yaml`)
 * `cf deploy <archive-path>` (mtar file)
 * `cf logs <service-name>` to see what is going on with a given service
+* `cf services` shows the services and associated apps running for the logged in space
 
 #### Authentication and Authorization
 
@@ -76,4 +77,5 @@ As an alternative to the built-in method above, this way the application is depl
 
 UIs can be built through freestyle SAPUI5 applications or using SAP Fiori elements applications.  
 The latter is based on SAPUI5, but provides a series of out-of-the-box elements for most common usecases  
-A `launchpage.html` file can have all the web apps centralized and shown in a local SAP launchpad
+A `launchpage.html` file can have all the web apps centralized and shown in a local SAP launchpad  
+The name of your SAP Cloud service (cpapp in this case) should be unique within an SAP BTP region (?)
