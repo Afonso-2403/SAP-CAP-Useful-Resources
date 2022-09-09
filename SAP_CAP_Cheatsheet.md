@@ -7,6 +7,7 @@
   * [Useful commands](#useful-commands)
   * [Useful APIs](#useful-apis)
   * [OData](#odata)
+  * [External Services](#external-services)
   * [Deploying to the cloud](#deploying-to-the-cloud)
 
 * [UI](#ui)
@@ -39,6 +40,8 @@ Others are absolute references, prefixed with `@`, look under the `node_modules`
 `cds watch` - starts and keeps track of changes in the application  
 `cds deploy --to <db_type:custom_db_name>` - deploys the models to a persistent database (sqlite, hana, etc)  
 `cds compile <cds_file_path> --to sql` - to create the Tables/Views needed to represent the models in that file and see the sql commands in the console
+`cds env ls` to inspect all the project's specific configurations
+`npm install --save <package>` adds that package as a dependency in `package.json` so that it is installed when deploying to the cloud
 
 ### **Useful APIs**
 
@@ -49,7 +52,13 @@ Others are absolute references, prefixed with `@`, look under the `node_modules`
 
 OData queries support expansions through a foreign key, for instance `<URL>/catalog/Authors?$expand=books($select=ID,title)` to show the authors with their respective books
 
+### **External Services**
+
+`cds import <path_to_edmx_file` to import an external service, a folder `external` will be created with both the imported file and a cds model definition (`.csn` file) to be used by the application. A requirement is added in the `package.json` to the external application
+
 ### **Deploying to the cloud**
+
+Not being able to use cf was solved in [by adding an env variable](https://letsgivebackblog.wordpress.com/2017/12/04/cloudfoundry-command-line-error-the-system-cannot-find-the-path-specified/)
 
 * `cf login` to login to the cloud foundry account and space
 * `cds add hana --force` to update `package.json` with the requirement to use hana as the data source
@@ -60,16 +69,19 @@ OData queries support expansions through a foreign key, for instance `<URL>/cata
 
 #### For multitarget applications
 
-As an alternative to the built-in method above, this way the application is deployed as a whole - less manual steps, so easier to automate for production
+As an alternative to the built-in method above, this way the application is deployed as a whole - less manual steps, so easier to automate for production  
+The project should be stored locally, while storing it in OneDrive problems arose during the build probably due to failed syncs
 
+* `cf install-plugin multiapps` to be able to use the deploy command
 * `cds add mta` generates an `mta.yaml` with various modules (Cloud Foundry Apps) and resources (Cloud Foundry Spaces)
-* `mbt build` to build the application archive (builds each module in `mta.yaml`)
+* `mbt build -t ./` to build the application archive (builds each module in `mta.yaml`)
 * `cf deploy <archive-path>` (mtar file)
 * `cf logs <service-name>` to see what is going on with a given service
 * `cf services` shows the services and associated apps running for the logged in space
 
 #### Authentication and Authorization
 
+`cds add xsuaa --for production` adds xsuaa service to `package.json` and creates the xsuaa security configuration for the project
 `cds compile srv/ --to xsuaa > xs-security.json` updates package.json with a requirement for uaa  
 `path: xs-security.json` should be added to the mta.yaml under `resources`
 
